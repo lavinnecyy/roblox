@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Critical Error: Roblox.exe</title>
+    <style>
+        /* Base Styles */
+        body {
+            background-color: #ffffff; 
+            font-family: 'MS Sans Serif', 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden; 
+        }
+
+        /* The main dialog box container (Classic Windows Gray) */
+        .dialog-box {
+            position: relative;
+            z-index: 10;
+            background-color: #c0c0c0; 
+            border: 3px solid;
+            border-color: #ffffff #808080 #808080 #ffffff; 
+            box-shadow: 5px 5px 0 #000000;
+            padding: 0;
+            max-width: 90%;
+            width: 450px;
+            min-height: 200px; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* The title bar */
+        .title-bar {
+            background-color: #000080;
+            color: white;
+            padding: 5px 10px;
+            font-weight: bold;
+            font-size: 14px; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: default;
+        }
+
+        /* The main content area inside the box */
+        .content {
+            padding: 20px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-grow: 1; 
+        }
+
+        /* Question Text Font Size (Small) */
+        h1 {
+            font-size: 0.9em; 
+            color: #000;
+            margin-top: 0;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        h1::before {
+            content: '⚠️'; 
+            font-size: 1.5em; 
+            margin-right: 15px;
+        }
+
+        /* Small Image Styling (OUTSIDE the box) */
+        .page-image {
+            position: absolute;
+            width: 300px; /* Kept your previous size adjustment */
+            height: 250px; /* Kept your previous size adjustment */
+            object-fit: cover; 
+            z-index: 5; 
+            box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3); 
+            transition: left 0.3s ease-out, top 0.3s ease-out; 
+            border-radius: 5px; 
+            display: none; 
+        }
+
+        /* Button Container for both OK and initial NO button */
+        #button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid #808080;
+            width: 100%;
+        }
+
+        /* General Button Style (Classic 3D) */
+        button {
+            background-color: #c0c0c0;
+            border: 2px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+            padding: 5px 15px;
+            font-family: inherit;
+            font-size: 0.9em; 
+            cursor: pointer;
+            box-shadow: 1px 1px 0 #000000;
+            transition: all 0.1s ease-in-out;
+        }
+        
+        button:active {
+            border-color: #000000 #ffffff #ffffff #000000;
+            box-shadow: none;
+            transform: translate(1px, 1px);
+        }
+
+        /* Okay Button (Static, grows) */
+        #okay-btn {
+            z-index: 20;
+            margin: 0 10px; 
+        }
+        
+        /* No Buttons (Moving and Multiplying) */
+        .no-btn {
+            position: absolute; 
+            margin: 0;
+            font-size: 0.9em; 
+            transition: left 0.3s ease-out, top 0.3s ease-out, transform 0.1s; 
+            z-index: 50; 
+        }
+        
+        /* The initial NO button must START inside the box */
+        #initial-no-btn {
+            position: static; 
+            margin: 0 10px;
+            z-index: 20;
+        }
+
+        /* Success Message Container */
+        #success-message {
+            display: none; 
+            color: #333333; 
+            font-family: 'MS Sans Serif', 'Arial', sans-serif; 
+            font-size: 1.0em; 
+            font-weight: bold;
+            text-align: center;
+            padding: 20px 0; 
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column; 
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+        }
+        
+        /* Success Image Styling */
+        #success-image {
+            width: 100px; 
+            height: 100px;
+            object-fit: cover;
+            margin-bottom: 15px; 
+            border-radius: 5px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            display: none; 
+        }
+
+        /* Audio player styling (if visible) */
+        #success-audio-player {
+            margin-top: 15px;
+            display: none; 
+        }
+    </style>
+</head>
+<body>
+
+    <img class="page-image" id="img1" src="sige.jpg" alt="Roblox Pic 1" style="top: 50px; left: 50px;">
+    <img class="page-image" id="img2" src="oksi.jpg" alt="Roblox Pic 2" style="top: 100px; right: 50px;">
+    <img class="page-image" id="img3" src="oksiii.jpg" alt="Roblox Pic 3" style="bottom: 50px; left: 100px;">
+
+
+    <div class="dialog-box" id="dialog-box">
+        <div class="title-bar">
+            <span>Critical Error - Roblox.exe</span>
+            <span style="font-size: 1.5em; cursor: pointer;">x</span>
+        </div>
+        
+        <div id="dialog-content" class="content">
+            <h1 id="question">Tara Roblox tayo?</h1>
+
+            <div id="button-container">
+                <button id="okay-btn" onclick="handleOkay()">Okay</button>
+                <button id="initial-no-btn" onmouseover="handleNoMove(this)" onclick="handleNoClick(this)">No</button>
+            </div>
+        </div>
+        
+        <div id="success-message" style="display: none;">
+            
+            <img id="success-image" src="ioss.jpg" alt="Success Image">
+            
+            <p style="margin: 0;">Iba ka talaga, truepah! </p>
+            
+            <audio id="success-audio-player" src="Aljur_Abrenica_Song_Cover-Sound_Effect(360p).mp4" controls></audio>
+        </div>
+    </div>
+
+    <audio id="audio-player-hidden" src="Aljur_Abrenica_Song_Cover-Sound_Effect(360p).mp4" preload="auto"></audio>
+
+    <script>
+
+        let okayFontSize = 0.9; 
+        let clickCount = 0; 
+        let buttonsToCreate = 0;
+        let totalNoButtons = 1;
+
+        const okayBtn = document.getElementById('okay-btn');
+        const initialNoBtn = document.getElementById('initial-no-btn');
+        const dialogContent = document.getElementById('dialog-content');
+        const successMessage = document.getElementById('success-message');
+        const imageElements = document.querySelectorAll('.page-image');
+        const successImage = document.getElementById('success-image'); 
+        const hiddenAudioPlayer = document.getElementById('audio-player-hidden');
+        const visibleAudioPlayer = document.getElementById('success-audio-player');
+        
+        const img1 = document.getElementById('img1');
+        const img2 = document.getElementById('img2');
+        const img3 = document.getElementById('img3');
+        
+
+        const DIALOG_WIDTH = 450; 
+        const DIALOG_HEIGHT = 200; 
+        const SAFE_MARGIN = 50;         
+
+        function getRandomPosition(element) {
+            const screenW = window.innerWidth;
+            const screenH = window.innerHeight;
+            const elementW = element.offsetWidth;
+            const elementH = element.offsetHeight;
+            
+            const dialogBox = document.getElementById('dialog-box');
+            
+
+            const dialogX = (screenW - dialogBox.offsetWidth) / 2;
+            const dialogY = (screenH - dialogBox.offsetHeight) / 2;
+            
+            let newX, newY;
+            let attempts = 0;
+
+   do {
+
+                const xRange = screenW - elementW - 2 * SAFE_MARGIN;
+                const yRange = screenH - elementH - 2 * SAFE_MARGIN;
+                
+                newX = SAFE_MARGIN + Math.random() * xRange;
+                newY = SAFE_MARGIN + Math.random() * yRange;
+
+
+                const buffer = 40; 
+                const overlapsX = (newX < dialogX + dialogBox.offsetWidth + buffer) && (newX + elementW > dialogX - buffer);
+                const overlapsY = (newY < dialogY + dialogBox.offsetHeight + buffer) && (newY + elementH > dialogY - buffer);
+                
+
+                if (!(overlapsX && overlapsY)) {
+
+                    return { x: newX, y: newY };
+                }
+                
+                attempts++;
+
+            } while (attempts < 50); 
+            
+
+            return { x: newX, y: newY };
+        }
+
+
+        function moveElementRandomly(element) {
+            const pos = getRandomPosition(element);
+            element.style.left = `${pos.x}px`;
+            element.style.top = `${pos.y}px`;
+        }
+
+
+        function updateImagesVisibility() {
+
+            if (clickCount === 2) {
+                img1.style.display = 'block';
+            } else if (clickCount === 3) {
+                img1.style.display = 'none';
+            }
+
+
+            if (clickCount === 5) {
+                img2.style.display = 'block';
+            } else if (clickCount === 6) {
+                img2.style.display = 'none';
+            }
+
+
+            if (clickCount === 7) {
+                img3.style.display = 'block';
+            } else if (clickCount === 8) {
+                img3.style.display = 'none';
+            }
+        }
+
+
+        function handleNoMove(button) {
+
+            if (button.id !== 'initial-no-btn' || clickCount > 0) {
+                 moveElementRandomly(button);
+            }
+            
+            imageElements.forEach(img => {
+  if (img.style.display === 'block') {
+                    moveElementRandomly(img);
+                }
+            });
+
+            okayFontSize += 0.05; 
+            okayBtn.style.fontSize = `${okayFontSize}em`;
+            okayBtn.style.padding = `${5 + (okayFontSize - 0.9) * 8}px ${15 + (okayFontSize - 0.9) * 15}px`;
+
+            button.textContent = 'No'; 
+        }
+
+
+        function handleNoClick(clickedButton) {
+            clickCount++;
+            
+
+            if (clickCount === 1 || clickCount === 2) {
+                buttonsToCreate = 2; 
+            } else {
+                buttonsToCreate = 3; 
+            }
+
+
+            if (clickCount === 1) {
+                document.getElementById('button-container').removeChild(initialNoBtn);
+                document.body.appendChild(initialNoBtn);
+                initialNoBtn.style.position = 'absolute';
+                initialNoBtn.className = 'no-btn';
+            }
+
+
+            for (let i = 0; i < buttonsToCreate; i++) {
+                totalNoButtons++;
+                const newNoButton = document.createElement('button');
+                newNoButton.className = 'no-btn';
+                newNoButton.textContent = 'No';
+                newNoButton.setAttribute('onmouseover', 'handleNoMove(this)');
+                newNoButton.setAttribute('onclick', 'handleNoClick(this)');
+
+                document.body.appendChild(newNoButton);
+                moveElementRandomly(newNoButton);
+            }
+
+
+            moveElementRandomly(clickedButton);
+            
+
+            updateImagesVisibility();
+        }
+
+
+        function handleOkay() {
+   dialogContent.style.display = 'none';
+            document.querySelectorAll('.no-btn').forEach(btn => btn.style.display = 'none');
+            document.querySelectorAll('.page-image').forEach(img => img.style.display = 'none'); 
+
+
+            successMessage.style.display = 'flex'; 
+            successImage.style.display = 'block'; 
+            visibleAudioPlayer.style.display = 'block'; 
+            
+
+            hiddenAudioPlayer.src = "Aljur_Abrenica_Song_Cover-Sound_Effect(360p).mp4";
+            
+            hiddenAudioPlayer.play().catch(error => {
+                console.error("Audio playback failed (check browser policy):", error);
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+
+            imageElements.forEach(moveElementRandomly);
+        });
+    </script>
+</body>
+</html>
